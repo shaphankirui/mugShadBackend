@@ -20,6 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\BookingController;
+
 
 Route::get('/cars', [CarController::class, 'index']);
 Route::get('/cars/{id}', [CarController::class, 'show']);
@@ -27,3 +29,8 @@ Route::post('/cars', [CarController::class, 'store']);
 Route::put('/cars/{id}', [CarController::class, 'update']);
 Route::delete('/cars/{id}', [CarController::class, 'destroy']);
 Route::get('/cars/search', [CarController::class, 'search'])->name('cars.search');
+Route::get('/bookings', [BookingController::class, 'index']);
+Route::get('/bookings/{id}', [BookingController::class, 'show']);
+Route::post('/bookings', [BookingController::class, 'store']);
+Route::put('/bookings/{id}', [BookingController::class, 'update']);
+Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
