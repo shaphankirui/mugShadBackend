@@ -61,7 +61,7 @@ class BookingController extends Controller {
             'car_id' => 'required|exists:cars,id',
             'id_number' => 'required',
             'phone_number' => 'required',
-            'license_plate' => 'required',
+            'license_plate' => 'nullable',
             'destination' => 'required',
         ]);
 

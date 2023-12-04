@@ -32,6 +32,16 @@ class CarController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
+        
+        if ($request->hasFile('picture')) {
+            $image = $request->file('picture');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images'), $imageName); // Move the image to the 'images' directory in public folder
+            $carData = $request->except('picture');
+            $carData['picture'] = $imageName; // Save the image name to the database
+            $car = Car::create($carData);
+            return response()->json($car, 201);
+        }
 
         $car = Car::create($request->all());
 
