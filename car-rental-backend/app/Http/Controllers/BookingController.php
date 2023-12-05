@@ -24,8 +24,8 @@ class BookingController extends Controller {
     public function store(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'pickup_date' => 'required|date',
-            'dropoff_date' => 'required|date',
+            'pickup_date' => 'required|date_format:m/d/Y',
+            'dropoff_date' => 'required|date_format:m/d/Y',
             'pickup_location' => 'required',
             'dropoff_location' => 'required',
             'car_type' => 'required',
@@ -35,14 +35,27 @@ class BookingController extends Controller {
             'license_plate' => 'required',
             'destination' => 'required',
         ]);
-
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
-
-        $booking = Booking::create($request->all());
-
-        return response()->json($booking, 201);
+    
+        $pickupDate = date_create_from_format('m/d/Y', $request->input('pickup_date'));
+        $dropoffDate = date_create_from_format('m/d/Y', $request->input('dropoff_date'));
+    
+        // Check if date conversion was successful
+        if ($pickupDate && $dropoffDate) {
+            $booking = Booking::create([
+                'name' => $request->input('name'),
+                'pickup_date' => $pickupDate->format('Y-m-d'),
+                'dropoff_date' => $dropoffDate->format('Y-m-d'),
+                // Include other fields...
+            ]);
+    
+            return response()->json($booking, 201);
+        } else {
+            // Handle date conversion error
+            return response()->json(['error' => 'Invalid date format'], 400);
+        }
     }
 
     public function update(Request $request, $id) {
@@ -52,26 +65,41 @@ class BookingController extends Controller {
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'pickup_date' => 'required|date',
-            'dropoff_date' => 'required|date',
-            'pickup_location' => 'required',
-            'dropoff_location' => 'required',
+            'name' => 'nullable',
+            'pickup_date' => 'nullable|',
+            'dropoff_date' => 'nullable',
+            'pickup_location' => 'nullable',
+            'dropoff_location' => 'nullable',
             'car_type' => 'required',
-            'car_id' => 'required|exists:cars,id',
-            'id_number' => 'required',
+            'car_id' => 'nullable',
+            'id_number' => 'nullable',
             'phone_number' => 'required',
             'license_plate' => 'nullable',
-            'destination' => 'required',
+            'destination' => 'nullable',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
-        }
+        
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 400);
+    }
 
-        $booking->update($request->all());
+    $pickupDate = date_create_from_format('m/d/Y', $request->input('pickup_date'));
+    $dropoffDate = date_create_from_format('m/d/Y', $request->input('dropoff_date'));
 
-        return response()->json($booking, 200);
+    // Check if date conversion was successful
+    if ($pickupDate && $dropoffDate) {
+        $booking = Booking::create([
+            'name' => $request->input('name'),
+            'pickup_date' => $pickupDate->format('Y-m-d'),
+            'dropoff_date' => $dropoffDate->format('Y-m-d'),
+            // Include other fields...
+        ]);
+
+        return response()->json($booking, 201);
+    } else {
+        // Handle date conversion error
+        return response()->json(['error' => 'Invalid date format'], 400);
+    }
     }
 
     public function destroy($id) {
