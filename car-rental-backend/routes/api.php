@@ -18,6 +18,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+use App\Http\Controllers\UserController;
+
+// Define a route for creating users
+Route::post('/register', [UserController::class, 'store'])
+    ->withoutMiddleware(['auth']);
+
 
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\BookingController;
